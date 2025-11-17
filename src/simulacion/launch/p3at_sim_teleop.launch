@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- 1) Empty world en Gazebo -->
+  <include file="$(find simulacion)/gazebo/empty_world.launch">
+    <arg name="use_sim_time" value="true"/>
+  </include>
+
+  <!-- 2) Publicar robot_description -->
+  <param name="robot_description"
+         command="$(find xacro)/xacro --inorder
+                  '$(find simulacion)/p3at_description/p3at_urdf/pioneer3at.urdf.xacro'" />
+
+  <!-- 3) TF de joints -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher"
+        name="robot_state_publisher" output="screen"/>
+
+  <!-- 4) Joint State Publisher -->
+  <node pkg="joint_state_publisher" type="joint_state_publisher"
+        name="joint_state_publisher" output="screen"/>
+
+  <!-- 5) Spawn model -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"
+        args="-param robot_description -urdf -model pioneer3at"
+        output="screen"/>
+
+  <!-- 6) RViz -->
+  <node pkg="rviz" type="rviz" name="rviz"
+        args="-d $(find simulacion)/rviz/P3AT.rviz"
+        output="screen"/>
+        
+<!-- Teleop por teclado en una TERMINAL NUEVA (xterm) -->
+<node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py"
+      name="teleop_twist_keyboard" output="screen"
+      launch-prefix="xterm -T TeleopP3AT -e">
+  <remap from="cmd_vel" to="/sim_p3at/cmd_vel"/>
+  <param name="key_timeout" value="0.3"/>   <!-- en segundos; suelta tecla => 0 en ~0.3s -->
+  <param name="repeat_rate" value="25.0"/>
+  <param name="speed" value="0.4"/>
+  <param name="turn"  value="1.0"/>
+</node>
+
+
+</launch>
+

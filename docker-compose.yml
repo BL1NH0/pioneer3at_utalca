@@ -1,0 +1,25 @@
+version: '3.3'
+
+services:
+  pioneer3at:
+    build: .
+    image: pioneer3at_utalca:latest
+    container_name: pioneer3at_ros
+    privileged: true
+    network_mode: host
+    
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /dev:/dev:rw
+    
+    devices:
+      - /dev/dri:/dev/dri
+    
+    stdin_open: true
+    tty: true
+    
+    command: /bin/bash

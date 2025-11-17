@@ -31,8 +31,16 @@ RUN useradd -m -s /bin/bash rosuser && \
 USER rosuser
 WORKDIR /home/rosuser
 
-# Copiar TU workspace completo
-COPY --chown=rosuser:rosuser . /home/rosuser/pioneer3at_utalca
+# Crear workspace
+RUN mkdir -p pioneer3at_utalca/src
+WORKDIR /home/rosuser/pioneer3at_utalca/src
+
+# Clonar paquetes estándar desde GitHub
+RUN git clone https://github.com/amor-ros-pkg/rosaria.git
+RUN git clone https://github.com/reedhedges/AriaCoda.git
+
+# Copiar SOLO tu paquete simulacion personalizado
+COPY --chown=rosuser:rosuser src/simulacion /home/rosuser/pioneer3at_utalca/src/simulacion
 
 # Compilar AriaCoda
 WORKDIR /home/rosuser/pioneer3at_utalca/src/AriaCoda

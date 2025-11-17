@@ -1,38 +1,57 @@
 FROM osrf/ros:noetic-desktop-full
 
-# Instalar dependencias adicionales
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Instalar dependencias (del tutorial)
 RUN apt-get update && apt-get install -y \
-    python3-catkin-tools \
-    python3-rosdep \
-    python3-rosinstall \
-    python3-rosinstall-generator \
-    python3-wstool \
-    build-essential \
     git \
-    vim \
-    nano \
+    build-essential \
+    cmake \
+    make \
+    g++ \
+    doxygen \
+    swig \
+    default-jdk \
+    python3-dev \
+    python3-catkin-tools \
+    ros-noetic-rqt-robot-steering \
+    ros-noetic-rqt \
+    ros-noetic-rqt-common-plugins \
+    ros-noetic-xacro \
+    ros-noetic-robot-state-publisher \
+    gazebo11 \
+    ros-noetic-gazebo-ros \
+    ros-noetic-gazebo-ros-pkgs \
     && rm -rf /var/lib/apt/lists/*
 
-# Crear directorio de workspace
-WORKDIR /root/catkin_ws
+# Crear usuario
+RUN useradd -m -s /bin/bash rosuser && \
+    echo "rosuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Copiar el código fuente
-COPY src/ /root/catkin_ws/src/
+USER rosuser
+WORKDIR /home/rosuser
 
-# Inicializar rosdep y instalar dependencias
-RUN apt-get update && \
-    rosdep update && \
-    rosdep install --from-paths src --ignore-src -r -y && \
-    rm -rf /var/lib/apt/lists/*
+# Copiar TU workspace completo
+COPY --chown=rosuser:rosuser . /home/rosuser/pioneer3at_utalca
 
-# Compilar el workspace
+# Compilar AriaCoda
+WORKDIR /home/rosuser/pioneer3at_utalca/src/AriaCoda
+USER root
+RUN make && make install
+USER rosuser
+
+# Variables de entorno
+ENV LD_LIBRARY_PATH=/home/rosuser/pioneer3at_utalca/src/AriaCoda/lib:/usr/local/lib:$LD_LIBRARY_PATH
+ENV GAZEBO_MODEL_PATH=/home/rosuser/pioneer3at_utalca/src/simulacion/gazebo/models:$GAZEBO_MODEL_PATH
+
+# Compilar workspace
+WORKDIR /home/rosuser/pioneer3at_utalca
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
-# Configurar el entrypoint
-RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc && \
-    echo "source /root/catkin_ws/devel/setup.bash" >> /root/.bashrc
+# Configurar bashrc
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc && \
+    echo "source /home/rosuser/pioneer3at_utalca/devel/setup.bash" >> ~/.bashrc && \
+    echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/home/rosuser/pioneer3at_utalca/src/AriaCoda/lib:/usr/local/lib" >> ~/.bashrc && \
+    echo "export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:/home/rosuser/pioneer3at_utalca/src/simulacion/gazebo/models" >> ~/.bashrc
 
-# Establecer el workspace como directorio de trabajo
-WORKDIR /root/catkin_ws
-
-CMD ["bash"]
+CMD ["/bin/bash"]

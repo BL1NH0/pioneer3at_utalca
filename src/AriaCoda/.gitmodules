@@ -1,3 +1,0 @@
-[submodule "rust-ritual/ritual"]
-	path = rust-ritual/ritual
-	url = https://github.com/rust-qt/ritual.git

@@ -1,5 +1,9 @@
 #!/bin/bash
+set -e
 
-echo "🔨 Building Pioneer 3-AT Docker Image..."
-docker-compose build --no-cache
-echo "✅ Build complete!"
+echo "🔨 Construyendo imagen Docker..."
+docker build -t pioneer3at_utalca:latest .
+
+echo "✅ Imagen construida exitosamente!"
+echo ""
+echo "Para iniciar: ./start.sh"

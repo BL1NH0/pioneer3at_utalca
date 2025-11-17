@@ -1,12 +1,26 @@
+# Excluir paquetes clonados (se descargan en Docker)
+src/rosaria/
+src/AriaCoda/
+
+# Incluir solo tu paquete personalizado
+!src/simulacion/
+
+# Build artifacts
 build/
 devel/
 install/
 logs/
 *.log
+
+# Python
 __pycache__/
 *.py[cod]
+
+# IDEs
 .vscode/
 .idea/
 *.swp
 *~
+
+# OS
 .DS_Store

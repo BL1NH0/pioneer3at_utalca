@@ -44,8 +44,15 @@ COPY --chown=rosuser:rosuser src/simulacion /home/rosuser/pioneer3at_utalca/src/
 
 # Compilar AriaCoda
 WORKDIR /home/rosuser/pioneer3at_utalca/src/AriaCoda
+
+# Arreglar permisos de git antes de cambiar a root
 USER root
+RUN git config --global --add safe.directory /home/rosuser/pioneer3at_utalca/src/AriaCoda
+RUN chown -R root:root /home/rosuser/pioneer3at_utalca/src/AriaCoda
 RUN make && make install
+
+# Volver a rosuser y arreglar permisos del workspace
+RUN chown -R rosuser:rosuser /home/rosuser/pioneer3at_utalca
 USER rosuser
 
 # Variables de entorno

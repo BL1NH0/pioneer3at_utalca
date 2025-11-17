@@ -1,16 +1,15 @@
 #!/bin/bash
+set -e
 
-echo "🤖 Pioneer 3-AT ROS Noetic Docker Environment"
-echo "=============================================="
+echo "🚀 Iniciando contenedor..."
 
-# Permitir conexiones X11
-xhost +local:docker
+# Permitir X11
+xhost +local:docker 2>/dev/null
 
-# Iniciar el contenedor
+# Iniciar con docker-compose
 docker-compose up -d
 
-# Entrar al contenedor
-docker exec -it pioneer3at_ros bash
-
-# Cleanup al salir
-xhost -local:docker
+echo "✅ Contenedor iniciado!"
+echo ""
+echo "Para acceder: docker exec -it pioneer3at_ros bash"
+echo "Para simulación: roslaunch simulacion example-pioneer3at-world.launch"

@@ -1,0 +1,9 @@
+build/
+devel/
+install/
+.git/
+.gitignore
+*.md
+Dockerfile
+docker-compose.yml
+*.sh

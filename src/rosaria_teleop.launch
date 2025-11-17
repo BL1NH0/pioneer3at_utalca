@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- =============================
+       [A] ARGUMENTOS
+       ============================= -->
+  <arg name="activate_rosaria" default="true"/>
+  <arg name="rosaria_port" default="/dev/ttyUSB0"/>   <!-- Pioneer -->
+  
+  <!-- RosAria DRIVER -->
+  <group if="$(arg activate_rosaria)">
+    <node pkg="rosaria" type="RosAria" name="rosaria" output="screen">
+      <param name="port" value="$(arg rosaria_port)"/>
+      <rosparam>
+        respawn: true
+        respawn_delay: 2
+      </rosparam>
+    </node>
+  </group>
+
+<node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py"
+      name="teleop_twist_keyboard" output="screen"
+      launch-prefix="xterm -T TeleopP3AT -e">
+  <remap from="cmd_vel" to="/rosaria/cmd_vel"/>
+  <param name="key_timeout" value="0.3"/>   <!-- en segundos; suelta tecla => 0 en ~0.3s -->
+  <param name="repeat_rate" value="25.0"/>
+  <param name="speed" value="0.4"/>
+  <param name="turn"  value="1.0"/>
+</node>
+
+</launch>
+

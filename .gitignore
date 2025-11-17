@@ -1,21 +1,12 @@
-# ROS build artifacts
 build/
 devel/
 install/
-.catkin_workspace
-*.pyc
+logs/
+*.log
 __pycache__/
-
-# IDE files
+*.py[cod]
 .vscode/
 .idea/
 *.swp
-*.swo
 *~
-
-# OS files
 .DS_Store
-Thumbs.db
-
-# Docker
-.docker/
